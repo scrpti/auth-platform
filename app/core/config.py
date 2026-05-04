@@ -5,6 +5,7 @@ class Settings(BaseSettings):
 
     DATABASE_URL: str = "postgresql://postgres:postgres@localhost:5432/authplatform"
     SECRET_KEY: str = "changeme-in-production-use-openssl-rand-hex-32"
+    REDIS_URL: str = "redis://localhost:6380"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
