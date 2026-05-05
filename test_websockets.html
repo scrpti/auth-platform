@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head><title>WebSocket Test</title></head>
+<body>
+  <h2>WebSocket Test</h2>
+  <input id="token" placeholder="Pega tu access_token aquí" style="width:500px">
+  <button onclick="connect()">Conectar</button>
+  <br><br>
+  <input id="msg" placeholder="Mensaje">
+  <button onclick="send()">Enviar</button>
+  <br><br>
+  <div id="log" style="font-family:monospace;background:#f0f0f0;padding:10px"></div>
+
+  <script>
+    let ws;
+    function log(msg) {
+      document.getElementById('log').innerHTML += msg + '<br>';
+    }
+    function connect() {
+      const token = document.getElementById('token').value;
+      ws = new WebSocket(`ws://localhost:8001/api/v1/notifications/ws/${token}`);
+      ws.onopen = () => log('✅ Conectado');
+      ws.onmessage = (e) => log('📩 ' + e.data);
+      ws.onclose = () => log('❌ Desconectado');
+    }
+    function send() {
+      ws.send(document.getElementById('msg').value);
+    }
+  </script>
+</body>
+</html>
