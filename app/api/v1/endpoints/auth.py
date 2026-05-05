@@ -8,6 +8,7 @@ from app.models.user import User
 from app.schemas.user import UserCreate, UserResponse
 from app.services.user_service import authenticate_user, create_user, get_user_by_email
 from app.core.limiter import limiter
+from app.core.cache import cache
 
 router = APIRouter()
 
@@ -39,6 +40,25 @@ def login(request: Request, data: LoginRequest, db: Session = Depends(get_db)):
     )
 
 @router.get("/me", response_model=UserResponse)
-@limiter.limit("3/minute")
+@limiter.limit("60/minute")
 def me(request: Request, current_user: User = Depends(get_current_user)):
     return current_user
+
+@router.get("/profile/{user_id}")
+@limiter.limit("30/minute")
+def get_profile(request: Request, user_id: str, db: Session = Depends(get_db)):
+    return _get_profile_cached(user_id, db)
+
+@cache(expire=30)
+def _get_profile_cached(user_id:str, db):
+    import time
+    time.sleep(1)
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return {
+        "id": str(user.id),
+        "email": user.email,
+        "full_name": user.full_name,
+        "is_active": user.is_active,
+    }
