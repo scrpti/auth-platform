@@ -15,6 +15,10 @@ def create_user(db: Session, data: UserCreate) -> User:
     db.add(user)
     db.commit()
     db.refresh(user)
+
+    from app.tasks import send_welcome_email
+    send_welcome_email.delay(user.email, user.full_name or "")
+
     return user
 
 def authenticate_user(db: Session, email: str, password: str) -> User | None:

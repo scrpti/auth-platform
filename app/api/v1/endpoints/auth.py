@@ -9,6 +9,7 @@ from app.schemas.user import UserCreate, UserResponse
 from app.services.user_service import authenticate_user, create_user, get_user_by_email
 from app.core.limiter import limiter
 from app.core.cache import cache
+from app.tasks import generate_report
 
 router = APIRouter()
 
@@ -61,4 +62,24 @@ def _get_profile_cached(user_id:str, db):
         "email": user.email,
         "full_name": user.full_name,
         "is_active": user.is_active,
+    }
+
+@router.post("/report")
+@limiter.limit("5/minute")
+def request_report(request: Request, current_user: User = Depends(get_current_user)):
+    task = generate_report.delay(str(current_user.id))
+    return {
+        "message": "Reporte en proceso",
+        "task_id": task.id
+    }
+
+@router.get("/report/{task_id}")
+@limiter.limit("30/minute")
+def get_report_status(request: Request, task_id: str, current_user: User = Depends(get_current_user)):
+    from app.core.celery_app import celery_app
+    task = celery_app.AsyncResult(task_id)
+    return {
+        "task_id": task_id,
+        "status": task.status,
+        "result": task.result if task.ready() else None
     }
