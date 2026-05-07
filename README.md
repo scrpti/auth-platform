@@ -60,9 +60,9 @@ celery -A app.core.celery_app worker --loglevel=info
 
 La API estará disponible en `http://localhost:8001/docs`
 
-##Diagrama de flujos
+## Diagrama de flujos
 
-###Diagrama de flujo de la ruta POST /api/v1/auth/login
+### Diagrama de flujo de la ruta POST /api/v1/auth/login
 
 ```mermaid
 flowchart TD
@@ -79,7 +79,7 @@ flowchart TD
     I --> K[200 OK · access_token + refresh_token]
 ```
 
-###Diagrama de flujo de la ruta POST /api/v1/auth/me
+### Diagrama de flujo de la ruta POST /api/v1/auth/me
 
 ```mermaid
 flowchart TD
