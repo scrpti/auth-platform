@@ -31,7 +31,7 @@ API backend de producción construida con FastAPI, PostgreSQL y Redis. Implement
 ### Instalación
 
 ```bash
-git clone https://github.com/tuusuario/auth-platform
+git clone https://github.com/scrpti/auth-platform
 cd auth-platform
 
 python -m venv .venv
